@@ -7,19 +7,20 @@ import VideoDetail from'./components/video_detail'
 
 const YOUTUBE_API_KEY = 'AIzaSyAvLpZ4toDiqLAayoq06bgoq1PJdV2tPw4';
 
-
-
-
 class App extends Component {
 
     constructor(props){
         super(props);
+        this.state = {videos:[], selectedVideo: null};
 
-        this.state = {videos:[]};
+       this.videoSearch('surfboards');
+    }
 
-        YTSearch({key: YOUTUBE_API_KEY,term: "surfing"},  (data,error) => {
+    videoSearch(term){
+        YTSearch({key: YOUTUBE_API_KEY,term: term},  (data,error) => {
             if(error==null)
-                this.setState({videos: data});
+                this.setState({videos: data,
+                    selectedVideo: data[0]});
             else
                 console.log(error.toString());
         });
@@ -28,14 +29,13 @@ class App extends Component {
     render(){
         return <div>
             <SearchBar />
-            <VideoDetail video = { this.state.videos[0] }/>
-            <VideoList videos = { this.state.videos }/>
+            <VideoDetail video = { this.state.selectedVideo}/>
+            <VideoList
+                onVideoSelect = {(selectedVideo) => this.setState({selectedVideo: selectedVideo})}
+                videos = { this.state.videos }/>
         </div>;
     }
-
 }
-
-
 
 ReactDom.render(<App />, document.querySelector('.container'));
 
